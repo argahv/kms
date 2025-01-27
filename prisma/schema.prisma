@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
+  role     Role
+  children Child[]  // Only for parents
+  classes  Class[]  // Only for teachers
+}
+
+model Child {
+  id              String             @id @default(uuid())
+  name            String
+  parent          User               @relation(fields: [parentId], references: [id])
+  parentId        String
+  attendanceRecords AttendanceRecord[]
+  marks           Mark[]
+  class           Class              @relation(fields: [classId], references: [id])
+  classId         String
+}
+
+model Class {
+  id            String             @id @default(uuid())
+  name          String
+  teacher       User               @relation(fields: [teacherId], references: [id])
+  teacherId     String
+  students      Child[]
+  routineEntries RoutineEntry[]
+  learningMaterials LearningMaterial[] // Add back-reference to LearningMaterial
+}
+
+model RoutineEntry {
+  id        String   @id @default(uuid())
+  day       String
+  time      String
+  subject   String
+  class     Class    @relation(fields: [classId], references: [id])
+  classId   String
+}
+
+model AttendanceRecord {
+  id        String   @id @default(uuid())
+  date      DateTime
+  status    AttendanceStatus
+  child     Child    @relation(fields: [childId], references: [id])
+  childId   String
+}
+
+model Mark {
+  id         String @id @default(uuid())
+  subject    String
+  score      Float
+  totalScore Float
+  child      Child  @relation(fields: [childId], references: [id])
+  childId    String
+}
+
+model LearningMaterial {
+  id        String @id @default(uuid())
+  title     String
+  subject   String
+  type      MaterialType
+  url       String
+  class     Class  @relation(fields: [classId], references: [id])
+  classId   String
+}
+
+enum Role {
+  TEACHER
+  PARENT
+  KID
+  ADMIN
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+}
+
+enum MaterialType {
+  PDF
+  VIDEO
+}
