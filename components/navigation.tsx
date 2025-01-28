@@ -22,50 +22,17 @@ export function Navigation({}: NavigationProps) {
   ];
 
   return (
-    <nav className='bg-primary text-primary-foreground p-4'>
+    <nav className=' text-primary-foreground p-4'>
       <div className='container mx-auto flex justify-between items-center'>
-        <Link href='/' className='text-2xl font-bold'>
-          Kids Management System
-        </Link>
-        <div className='hidden md:flex space-x-4'>
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`hover:text-secondary-foreground ${
-                pathname === item.href ? "font-bold" : ""
-              }`}>
-              {item.label}
-            </Link>
-          ))}
-          <Button onClick={logout} variant='secondary'>
-            Logout
-          </Button>
-        </div>
-        <div className='md:hidden'>
-          <Button onClick={() => setIsMenuOpen(!isMenuOpen)} variant='ghost'>
-            Menu
-          </Button>
-        </div>
+        <Button onClick={logout} variant='secondary'>
+          Logout
+        </Button>
       </div>
-      {isMenuOpen && (
-        <div className='md:hidden mt-4 space-y-2'>
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`block hover:text-secondary-foreground ${
-                pathname === item.href ? "font-bold" : ""
-              }`}
-              onClick={() => setIsMenuOpen(false)}>
-              {item.label}
-            </Link>
-          ))}
-          <Button onClick={logout} variant='secondary' className='w-full'>
-            Logout
-          </Button>
-        </div>
-      )}
+      <div className='md:hidden'>
+        <Button onClick={() => setIsMenuOpen(!isMenuOpen)} variant='ghost'>
+          Menu
+        </Button>
+      </div>
     </nav>
   );
 }
