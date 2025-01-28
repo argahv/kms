@@ -11,28 +11,28 @@ async function main() {
         id: "1",
         name: "John Doe",
         email: "teacher1@kms.com",
-        password: await bcrypt.hash("1234", 10),
+        password: "1234",
         role: "TEACHER",
       },
       {
         id: "2",
         name: "Jane Smith",
         email: "parent1@kms.com",
-        password: await bcrypt.hash("1234", 10),
+        password: "1234",
         role: "PARENT",
       },
       {
         id: "3",
         name: "Alice Johnson",
         email: "kid1@kms.com",
-        password: await bcrypt.hash("1234", 10),
+        password: "1234",
         role: "KID",
       },
       {
         id: "4",
         name: "Bob Brown",
         email: "admin1@kms.com",
-        password: await bcrypt.hash("1234", 10),
+        password: "1234",
         role: "ADMIN",
       },
     ],
@@ -63,8 +63,8 @@ async function main() {
   // Seed Classes
   const classes = await prisma.class.createMany({
     data: [
-      { id: "1", name: "Math Class", teacherId: "1" },
-      { id: "2", name: "Science Class", teacherId: "1" },
+      { id: "1", name: "Primary Classroom", teacherId: "1" },
+      { id: "2", name: "Lower Elementary", teacherId: "1" },
     ],
   });
 

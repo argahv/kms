@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client";
+import { AttendanceStatus, Role } from "@prisma/client";
 
 export interface Notice {
   id: string;
@@ -32,7 +32,7 @@ export interface RoutineEntry {
 export interface AttendanceRecord {
   id: string;
   date: string;
-  status: "present" | "absent" | "late";
+  status: AttendanceStatus;
 }
 
 export interface Mark {

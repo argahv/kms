@@ -2,17 +2,7 @@ import { useState } from "react";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import type { User, Notice } from "../types";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -30,7 +20,7 @@ import { ErrorAlert } from "@/components/error-alert";
 import { useAuthStore } from "@/lib/store";
 
 interface NoticesTabProps {
-  teacher: User;
+  teacher?: User;
 }
 
 export function NoticesTab({ teacher }: NoticesTabProps) {
@@ -47,8 +37,7 @@ export function NoticesTab({ teacher }: NoticesTabProps) {
       if (currentNotice) {
         await updateNotice.mutateAsync({ ...notice, id: currentNotice.id });
       } else {
-        console.log("notice", notice);
-        await createNotice.mutateAsync({ ...notice, authorId: teacher.id });
+        await createNotice.mutateAsync({ ...notice, authorId: teacher?.id });
       }
       setIsNoticeDialogOpen(false);
       setCurrentNotice(null);
@@ -86,65 +75,60 @@ export function NoticesTab({ teacher }: NoticesTabProps) {
         <CardTitle className='text-2xl text-primary'>Notices</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className='flex justify-between items-center mb-4'>
-          <h2 className='text-xl font-semibold text-secondary'>
-            School Notices
-          </h2>
-          <Dialog
-            open={isNoticeDialogOpen}
-            onOpenChange={setIsNoticeDialogOpen}>
-            <DialogTrigger asChild>
-              <Button
-                onClick={() => setCurrentNotice(null)}
-                className='btn btn-primary'>
-                <Plus className='mr-2 h-4 w-4' /> Add New Notice
-              </Button>
-            </DialogTrigger>
-            <DialogContent className='bg-card'>
-              <DialogHeader>
-                <DialogTitle>
-                  {currentNotice ? "Edit Notice" : "Add New Notice"}
-                </DialogTitle>
-              </DialogHeader>
-              <NoticeForm notice={currentNotice} onSave={handleNoticeSave} />
-            </DialogContent>
-          </Dialog>
+        <div className='flex justify-between items-center mb-6'>
+          {teacher && (
+            <Dialog
+              open={isNoticeDialogOpen}
+              onOpenChange={setIsNoticeDialogOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={() => setCurrentNotice(null)}>
+                  <Plus className='mr-2 h-4 w-4' /> Add New Notice
+                </Button>
+              </DialogTrigger>
+              <DialogContent className='bg-card'>
+                <DialogHeader>
+                  <DialogTitle>
+                    {currentNotice ? "Edit Notice" : "Add New Notice"}
+                  </DialogTitle>
+                </DialogHeader>
+                <NoticeForm notice={currentNotice} onSave={handleNoticeSave} />
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Content</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {notices.map((notice) => (
-              <TableRow key={notice.id}>
-                <TableCell>{notice.title}</TableCell>
-                <TableCell>{notice.content}</TableCell>
-                <TableCell>
+        <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
+          {notices.map((notice) => (
+            <Card key={notice.id} className='shadow-lg rounded-lg border'>
+              <CardHeader>
+                <CardTitle className='text-lg font-bold text-primary'>
+                  {notice.title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className='mb-2'>{notice.content}</p>
+                <p className='text-sm '>
                   {new Date(notice.date).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    onClick={() => handleNoticeEdit(notice)}>
-                    <Edit className='h-4 w-4 text-primary' />
-                  </Button>
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    onClick={() => handleNoticeDelete(notice.id)}>
-                    <Trash2 className='h-4 w-4 text-destructive' />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                </p>
+                {teacher && (
+                  <div className='mt-4 flex gap-2'>
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      onClick={() => handleNoticeEdit(notice)}>
+                      <Edit className='h-4 w-4 text-primary' />
+                    </Button>
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      onClick={() => handleNoticeDelete(notice.id)}>
+                      <Trash2 className='h-4 w-4 text-destructive' />
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </CardContent>
     </Card>
   );
@@ -183,29 +167,32 @@ function NoticeForm({
   return (
     <form onSubmit={handleSubmit} className='space-y-4'>
       <div>
-        <Label htmlFor='title'>Title</Label>
-        <Input
+        <label htmlFor='title' className='block font-medium text-sm'>
+          Title
+        </label>
+        <input
           id='title'
           name='title'
           value={formData.title}
           onChange={handleChange}
           required
-          className='input'
+          className='w-full border rounded-lg px-3 py-2'
         />
       </div>
       <div>
-        <Label htmlFor='content'>Content</Label>
+        <label htmlFor='content' className='block font-medium text-sm'>
+          Content
+        </label>
         <textarea
           id='content'
           name='content'
           value={formData.content}
           onChange={handleChange}
           required
-          className='input w-full h-24'
+          className='w-full border rounded-lg px-3 py-2 h-24'
         />
       </div>
-
-      <Button type='submit' className='btn btn-primary'>
+      <Button type='submit' className='btn btn-primary w-full'>
         Save
       </Button>
     </form>
