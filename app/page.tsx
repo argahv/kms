@@ -40,8 +40,6 @@ export default function Home() {
         {/* Main Content Section */}
         <div className='flex-1 flex justify-center p-4'>
           <main className='w-3/4'>
-            <SidebarTrigger />
-            <Navigation />
             <div className='mt-4'>
               {user?.role === Role.TEACHER && (
                 <TeacherDashboard teacher={user} />

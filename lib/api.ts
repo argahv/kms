@@ -9,7 +9,7 @@ import {
   LearningMaterial,
   LoginResponse,
 } from "@/types";
-import { Notice } from "@prisma/client";
+import { Class, Notice } from "@prisma/client";
 
 const api = axios.create({
   baseURL: "/api",
@@ -250,6 +250,16 @@ export const useDeleteNotice = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notices"] });
+    },
+  });
+};
+
+export const useClasses = () => {
+  return useQuery({
+    queryKey: ["classrooms"],
+    queryFn: async () => {
+      const response = await api.get<Class[]>("/class");
+      return response.data;
     },
   });
 };

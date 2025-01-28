@@ -1,8 +1,7 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient({
-  datasourceUrl: process.env.DATABASE_URL,
-});
+const prisma = new PrismaClient();
 
 async function main() {
   // Seed Users
@@ -12,29 +11,51 @@ async function main() {
         id: "1",
         name: "John Doe",
         email: "teacher1@kms.com",
-        password: "1234",
+        password: await bcrypt.hash("1234", 10),
         role: "TEACHER",
       },
       {
         id: "2",
         name: "Jane Smith",
         email: "parent1@kms.com",
-        password: "1234",
+        password: await bcrypt.hash("1234", 10),
         role: "PARENT",
       },
       {
         id: "3",
         name: "Alice Johnson",
         email: "kid1@kms.com",
-        password: "1234",
+        password: await bcrypt.hash("1234", 10),
         role: "KID",
       },
       {
         id: "4",
         name: "Bob Brown",
         email: "admin1@kms.com",
-        password: "1234",
+        password: await bcrypt.hash("1234", 10),
         role: "ADMIN",
+      },
+    ],
+  });
+
+  // Seed Notices
+  const notices = await prisma.notice.createMany({
+    data: [
+      {
+        id: "1",
+        title: "Welcome to the new school year",
+        content:
+          "We are excited to welcome you to the new school year. Please find the schedule attached.",
+        date: new Date(),
+        authorId: "1", // Assuming John Doe is the author
+      },
+      {
+        id: "2",
+        title: "Parent-Teacher Meeting",
+        content:
+          "There will be a parent-teacher meeting next week. Please make sure to attend.",
+        date: new Date(),
+        authorId: "1", // Assuming John Doe is the author
       },
     ],
   });

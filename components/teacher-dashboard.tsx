@@ -43,6 +43,7 @@ import {
   useUpdateLearningMaterial,
   useDeleteLearningMaterial,
   useNotices,
+  useClasses,
 } from "@/lib/api";
 import { ErrorAlert } from "@/components/error-alert";
 import { NoticesTab } from "@/components/NoticesTab";
@@ -72,6 +73,11 @@ export function TeacherDashboard({ teacher }: TeacherDashboardProps) {
     isLoading: isNoticesLoading,
     error: noticesError,
   } = useNotices();
+  const {
+    data: classes = [],
+    isLoading: isClassesLoading,
+    error: classError,
+  } = useClasses();
   const createRoutineEntry = useCreateRoutineEntry();
   const updateRoutineEntry = useUpdateRoutineEntry();
   const deleteRoutineEntry = useDeleteRoutineEntry();
@@ -387,6 +393,11 @@ function RoutineForm({
   entry: RoutineEntry | null;
   onSave: (entry: Omit<RoutineEntry, "id">) => void;
 }) {
+  const {
+    data: classes = [],
+    isLoading: isClassesLoading,
+    error: classError,
+  } = useClasses();
   const [formData, setFormData] = useState<Omit<RoutineEntry, "id">>(
     entry || { day: "", time: "", subject: "", classId: "" }
   );
@@ -437,15 +448,29 @@ function RoutineForm({
         />
       </div>
       <div>
-        <Label htmlFor='classId'>Class ID</Label>
-        <Input
+        <Label htmlFor='classId'>Class</Label>
+        <select
+          id='classId'
+          name='classId'
+          className='input'
+          value={formData.classId}
+          onChange={(e) => {
+            setFormData((prev) => ({ ...prev, classId: e.target.value }));
+          }}>
+          {classes.map((classItem) => (
+            <option key={classItem.id} value={classItem.id}>
+              {classItem.name}
+            </option>
+          ))}
+        </select>
+        {/* <Input
           id='classId'
           name='classId'
           value={formData.classId}
           onChange={handleChange}
           required
           className='input'
-        />
+        /> */}
       </div>
       <Button type='submit' className='btn btn-primary'>
         Save
