@@ -1,5 +1,15 @@
 import { Role } from "@prisma/client";
 
+export interface Notice {
+  id: string;
+  title: string;
+  content: string;
+  date: string;
+  author: {
+    name: string;
+  };
+}
+
 export interface User {
   id: string;
   name: string;

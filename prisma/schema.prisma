@@ -15,6 +15,7 @@ model User {
   role     Role
   children Child[]  // Only for parents
   classes  Class[]  // Only for teachers
+  notices  Notice[] // Add this line
 }
 
 model Child {
@@ -35,7 +36,7 @@ model Class {
   teacherId     String
   students      Child[]
   routineEntries RoutineEntry[]
-  learningMaterials LearningMaterial[] // Add back-reference to LearningMaterial
+  learningMaterials LearningMaterial[]
 }
 
 model RoutineEntry {
@@ -74,6 +75,15 @@ model LearningMaterial {
   classId   String
 }
 
+model Notice {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  date      DateTime
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+}
+
 enum Role {
   TEACHER
   PARENT
@@ -91,3 +101,4 @@ enum MaterialType {
   PDF
   VIDEO
 }
+

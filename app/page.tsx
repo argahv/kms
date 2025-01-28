@@ -11,17 +11,18 @@ import { useAuthStore } from "@/lib/store";
 import { Role } from "@prisma/client";
 
 export default function Home() {
-  const { user } = useAuthStore();
+  const { user, isAppReady } = useAuthStore();
+  console.log("isAppReady", isAppReady);
   const router = useRouter();
   console.log("user", user);
 
   useEffect(() => {
-    if (!user) {
+    if (isAppReady && !user) {
       router.push("/login");
     }
-  }, [user, router]);
+  }, [user, router, isAppReady]);
 
-  if (!user)
+  if (isAppReady && !user)
     return (
       <div className='flex justify-center items-center h-screen'>
         Loading...
@@ -30,12 +31,12 @@ export default function Home() {
 
   return (
     <div className='min-h-screen bg-background text-foreground'>
-      <Navigation />
+      {/* <Navigation /> */}
       <div className='container mx-auto p-4'>
-        {user.role === Role.TEACHER && <TeacherDashboard teacher={user} />}
-        {user.role === Role.PARENT && <ParentDashboard parent={user} />}
-        {user.role === Role.KID && <KidDashboard kid={user} />}
-        {user.role === Role.ADMIN && <AdminDashboard admin={user} />}
+        {user?.role === Role.TEACHER && <TeacherDashboard teacher={user} />}
+        {user?.role === Role.PARENT && <ParentDashboard parent={user} />}
+        {user?.role === Role.KID && <KidDashboard kid={user} />}
+        {user?.role === Role.ADMIN && <AdminDashboard admin={user} />}
       </div>
     </div>
   );

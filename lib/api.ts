@@ -9,6 +9,7 @@ import {
   LearningMaterial,
   LoginResponse,
 } from "@/types";
+import { Notice } from "@prisma/client";
 
 const api = axios.create({
   baseURL: "/api",
@@ -201,6 +202,54 @@ export const useLinkParentChild = () => {
         childId,
       });
       return response.data;
+    },
+  });
+};
+
+export const useNotices = () => {
+  return useQuery({
+    queryKey: ["notices"],
+    queryFn: async () => {
+      const response = await api.get<Notice[]>("/notices");
+      return response.data;
+    },
+  });
+};
+
+export const useCreateNotice = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (notice: Omit<Notice, "id" | "date" | "author">) => {
+      const response = await api.post<Notice>("/notices", notice);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notices"] });
+    },
+  });
+};
+
+export const useUpdateNotice = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (notice: Notice) => {
+      const response = await api.put<Notice>(`/notices/${notice.id}`, notice);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notices"] });
+    },
+  });
+};
+
+export const useDeleteNotice = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await api.delete(`/notices/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notices"] });
     },
   });
 };
